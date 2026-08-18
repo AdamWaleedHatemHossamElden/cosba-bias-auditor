@@ -1,16 +1,19 @@
 {
-  "name": "server",
+  "name": "cosba-bias-auditor-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Express and MySQL API for the CoS-BA Bias Auditor university project",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "ai-bias",
+    "express",
+    "mysql"
+  ],
+  "author": "Adam Waleed Hatem Hossam Elden",
+  "license": "MIT",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
@@ -18,7 +21,7 @@
     "express": "^5.2.1",
     "express-validator": "^7.3.1",
     "jsonwebtoken": "^9.0.3",
-    "multer": "^2.1.1",
+    "multer": "^2.2.0",
     "mysql2": "^3.19.0"
   },
   "devDependencies": {

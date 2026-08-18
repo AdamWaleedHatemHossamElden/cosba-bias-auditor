@@ -9,10 +9,10 @@ function Home() {
   const features = [
     { icon: Upload, title: 'Upload Content', desc: 'Submit AI-generated images or text with the prompt that created them.', path: '/upload' },
     { icon: Flag, title: 'Flag Bias', desc: 'Identify and categorize biases like gender stereotyping, racial bias, and more.', path: '/feed' },
-    { icon: BarChart2, title: 'Analyze Patterns', desc: 'Explore aggregated bias data through our real-time public dashboard.', path: '/dashboard' },
-    { icon: Users, title: 'Community Driven', desc: 'Thousands of contributors helping build a fairer AI ecosystem together.', path: '/feed' },
-    { icon: Shield, title: 'Secure & Private', desc: 'Your data and identity are protected. Report safely and anonymously.', path: user ? '/profile' : '/register' },
-    { icon: Zap, title: 'Real-time Insights', desc: 'Live metrics and charts updated as the community submits new reports.', path: '/dashboard' }
+    { icon: BarChart2, title: 'Analyze Patterns', desc: 'Explore aggregated bias data through the public community dashboard.', path: '/dashboard' },
+    { icon: Users, title: 'Community Driven', desc: 'Contribute evidence and discussion toward a better understanding of AI bias.', path: '/feed' },
+    { icon: Shield, title: 'Role-aware Access', desc: 'Authenticated reporting and administrator-only moderation actions.', path: user ? '/profile' : '/register' },
+    { icon: Zap, title: 'Current Insights', desc: 'View metrics and charts generated from submitted community reports.', path: '/dashboard' }
   ]
 
   return (
@@ -54,8 +54,8 @@ function Home() {
             </div>
             <div style={styles.miniStatDivider} />
             <div style={styles.miniStat}>
-              <span style={styles.miniStatNum}>100%</span>
-              <span style={styles.miniStatLabel}>Open Access</span>
+              <span style={styles.miniStatNum}>Public</span>
+              <span style={styles.miniStatLabel}>Browse & Analytics</span>
             </div>
             <div style={styles.miniStatDivider} />
             <div style={styles.miniStat}>

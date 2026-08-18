@@ -1,4 +1,5 @@
 const pool = require('../config/db')
+const { sendInternalError } = require('../utils/errorResponse')
 
 // Toggle like (like if not liked, unlike if liked)
 const toggleLike = async (req, res) => {
@@ -25,7 +26,7 @@ const toggleLike = async (req, res) => {
       res.json({ action: 'liked' })
     }
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to update like', err)
   }
 }
 
@@ -50,7 +51,7 @@ const getLikes = async (req, res) => {
       userLiked: userLiked.length > 0
     })
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to load likes', err)
   }
 }
 
