@@ -19,10 +19,6 @@ function Feed() {
   const navigate = useNavigate()
   const { user } = useAuth()
 
-  useEffect(() => {
-    fetchAll()
-  }, [])
-
   const fetchAll = async () => {
     setLoading(true)
     try {
@@ -57,6 +53,10 @@ function Feed() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchAll()
+  }, [])
 
   const handleAddComment = async (e, contentId) => {
     e.preventDefault()

@@ -1,5 +1,7 @@
 const pool = require('../config/db')
 const bcrypt = require('bcryptjs')
+const { sendInternalError } = require('../utils/errorResponse')
+const { deleteUploadFile } = require('../utils/uploadFiles')
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -9,14 +11,20 @@ const getAllUsers = async (req, res) => {
     )
     res.json(users)
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to load users', err)
   }
 }
 
 // Create new admin account
 const createAdmin = async (req, res) => {
   const { username, email, password } = req.body
+
   try {
+    const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [email])
+    if (existing.length > 0) {
+      return res.status(400).json({ message: 'Email already in use' })
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
     await pool.query(
       'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
@@ -24,7 +32,7 @@ const createAdmin = async (req, res) => {
     )
     res.status(201).json({ message: 'Admin account created ✅' })
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to create admin account', err)
   }
 }
 
@@ -34,27 +42,41 @@ const makeAdmin = async (req, res) => {
     await pool.query('UPDATE users SET role = ? WHERE id = ?', ['admin', req.params.id])
     res.json({ message: 'User promoted to admin ✅' })
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to promote user', err)
   }
 }
 
 // Delete a user
 const deleteUser = async (req, res) => {
   try {
+    const [content] = await pool.query(
+      'SELECT file_path FROM content WHERE user_id = ?',
+      [req.params.id]
+    )
     await pool.query('DELETE FROM users WHERE id = ?', [req.params.id])
+    await Promise.all(content.map(({ file_path }) => deleteUploadFile(file_path)))
     res.json({ message: 'User deleted ✅' })
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to delete user', err)
   }
 }
 
 // Delete content
 const deleteContent = async (req, res) => {
   try {
+    const [content] = await pool.query(
+      'SELECT file_path FROM content WHERE id = ?',
+      [req.params.id]
+    )
+    if (content.length === 0) {
+      return res.status(404).json({ message: 'Content not found' })
+    }
+
     await pool.query('DELETE FROM content WHERE id = ?', [req.params.id])
+    await deleteUploadFile(content[0].file_path)
     res.json({ message: 'Content deleted successfully ✅' })
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to delete content', err)
   }
 }
 
@@ -64,7 +86,7 @@ const deleteReport = async (req, res) => {
     await pool.query('DELETE FROM reports WHERE id = ?', [req.params.id])
     res.json({ message: 'Report deleted successfully ✅' })
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to delete report', err)
   }
 }
 
@@ -84,7 +106,7 @@ const updateReportStatus = async (req, res) => {
     }
     res.json({ message: 'Report status updated', status })
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message })
+    return sendInternalError(res, 'Failed to update report status', err)
   }
 }
 

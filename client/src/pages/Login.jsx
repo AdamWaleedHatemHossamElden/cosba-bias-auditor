@@ -48,7 +48,7 @@ function Login() {
         <div style={styles.rightContent}>
           <div style={styles.iconCircle}>🧠</div>
           <h3 style={styles.rightTitle}>Crowd-Sourced Bias Auditor</h3>
-          <p style={styles.rightSubtitle}>Join thousands of users helping to identify and flag biases in AI-generated content.</p>
+          <p style={styles.rightSubtitle}>Join the community helping to identify and flag biases in AI-generated content.</p>
           <div style={styles.featureList}>
             <div style={styles.feature}>✅ Flag AI Bias</div>
             <div style={styles.feature}>📊 View Analytics</div>

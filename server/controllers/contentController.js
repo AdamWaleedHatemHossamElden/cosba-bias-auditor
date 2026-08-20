@@ -1,12 +1,6 @@
 const pool = require('../config/db');
-const fs = require('fs');
-const path = require('path');
-
-// Make sure uploads folder exists
-const uploadsDir = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+const { sendInternalError } = require('../utils/errorResponse');
+const { deleteUploadFile } = require('../utils/uploadFiles');
 
 // Upload content
 const uploadContent = async (req, res) => {
@@ -35,8 +29,7 @@ const uploadContent = async (req, res) => {
 
     res.status(201).json({ message: 'Content uploaded successfully ✅' });
   } catch (err) {
-    console.error('Upload error:', err); // ✅ This will show exact error in terminal
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to upload content', err);
   }
 };
 
@@ -48,7 +41,7 @@ const getAllContent = async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to load content', err);
   }
 };
 
@@ -69,7 +62,7 @@ const getContentById = async (req, res) => {
 
     res.json(rows[0]);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to load content item', err);
   }
 };
 
@@ -82,7 +75,7 @@ const getMyContent = async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to load user content', err);
   }
 };
 
@@ -103,18 +96,11 @@ const deleteMyContent = async (req, res) => {
       req.user.id,
     ]);
 
-    if (rows[0].file_path) {
-      const uploadPath = path.join(uploadsDir, rows[0].file_path);
-      fs.unlink(uploadPath, (err) => {
-        if (err && err.code !== 'ENOENT') {
-          console.error('Failed to delete upload file:', err.message);
-        }
-      });
-    }
+    await deleteUploadFile(rows[0].file_path);
 
     res.json({ message: 'Content deleted successfully' });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to delete content', err);
   }
 };
 

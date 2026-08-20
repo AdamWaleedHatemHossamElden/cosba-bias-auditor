@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const { sendInternalError } = require('../utils/errorResponse');
 
 // Submit a report
 const submitReport = async (req, res) => {
@@ -15,7 +16,7 @@ const submitReport = async (req, res) => {
     );
     res.status(201).json({ message: 'Report submitted successfully ✅' });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to submit report', err);
   }
 };
 
@@ -31,7 +32,7 @@ const getAllReports = async (req, res) => {
     `);
     res.json(rows);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to load reports', err);
   }
 };
 
@@ -44,7 +45,7 @@ const getMyReports = async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to load user reports', err);
   }
 };
 
@@ -98,7 +99,7 @@ const getMetrics = async (req, res) => {
     `);
     res.json({ prevalence, density, consensus, topPrompts, contentTypes, modelBreakdown, timeline, statusBreakdown });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+    return sendInternalError(res, 'Failed to load report metrics', err);
   }
 };
 
