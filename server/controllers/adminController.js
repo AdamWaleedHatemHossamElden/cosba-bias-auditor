@@ -49,7 +49,12 @@ const makeAdmin = async (req, res) => {
 // Delete a user
 const deleteUser = async (req, res) => {
   try {
+    const [content] = await pool.query(
+      'SELECT file_path FROM content WHERE user_id = ?',
+      [req.params.id]
+    )
     await pool.query('DELETE FROM users WHERE id = ?', [req.params.id])
+    await Promise.all(content.map(({ file_path }) => deleteUploadFile(file_path)))
     res.json({ message: 'User deleted ✅' })
   } catch (err) {
     return sendInternalError(res, 'Failed to delete user', err)
